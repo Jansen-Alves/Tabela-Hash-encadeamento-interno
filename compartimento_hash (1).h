@@ -5,7 +5,6 @@
 
 #define TAMANHO_HASH 7
 #define REGISTRO_CLIENTE "clientes.dat"
-#define TABELA_HASH "tabHash.dat"
 #define METADADOS "meta.dat"
 
 Cliente *criarCliente(int chavecliente, char *nomecliente){
@@ -21,13 +20,11 @@ Cliente *criarCliente(int chavecliente, char *nomecliente){
     return novo;
 }
 
-Cliente *busca(FILE *tabhash, FILE*clientes, int chave){
+Cliente *busca(FILE*clientes, int chave){
     Cliente *procurado = (Cliente *)malloc(sizeof(Cliente));
     int validade = 0;
 
     int posicao = chave % TAMANHO_HASH;
-
-    rewind(tabhash);
     //printf("Fazendo busca\n");
     if (posicao == 0) {
         fread(&posicao, sizeof(int), 1, tabhash);
@@ -70,8 +67,8 @@ Cliente *busca(FILE *tabhash, FILE*clientes, int chave){
     }
 }
 
-void inserir(FILE *tabhash, FILE *meta, FILE *clientes, Cliente *info){
-    int posicao, contador, valor;
+void inserir(FILE *meta, FILE *clientes, Cliente *info){
+    int posicao, contador, valor, posiantiga;
     int validade = 0;
     Cliente *checagem = (Cliente *)malloc(sizeof(Cliente));
     posicao = info->chave % TAMANHO_HASH;
@@ -84,103 +81,99 @@ void inserir(FILE *tabhash, FILE *meta, FILE *clientes, Cliente *info){
         //free(info);
         return;
     }
-
-    rewind(tabhash);
-    if (posicao != 0) {
-        fseek(tabhash, sizeof(int) * (posicao), SEEK_SET);
-        fread(&posicao, sizeof(int), 1, tabhash);
-    } else {
-        fread(&posicao, sizeof(int), 1, tabhash);
-    }
-
-    //printf("pos: %d \n", posicao);
     rewind(meta);
-
     fread(&contador, sizeof(int), 1, meta);
-    //printf("Contador %d \n", contador);
-    if (posicao != -1) {
-            printf("Hash com dados \n");
-        while (validade == 0) {
+    
+    posiantiga = posicao;
+    rewind(clientes);
+    fseek(cliente, sizeof(Cliente) * (posicao), SEEK_SET);
+    if(0 >= fread(&checagem->chave, sizeof(int), 1, clientes)){
+        rewind(clientes);
+        fseek(cliente, sizeof(int) * (posicao), SEEK_SET);
+        fwrite(&info->chave, sizeof(int), 1, clientes);
+        fwrite(info->nome, sizeof(char), sizeof(info->nome), clientes);
+        fwrite(&info->estado, sizeof(int), 1, clientes);
+        fwrite(&info->estado, sizeof(int), 1, clientes);
+    }
+    else{
+        while(validade == 0){
             rewind(clientes);
             fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
-            //printf("pulo de %d \n", posicao);
             fread(&checagem->chave, sizeof(int), 1, clientes);
             fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
             //printf("nome na fila: %s \n", checagem->nome);
             fread(&checagem->estado, sizeof(int), 1, clientes);
             fread(&checagem->prox, sizeof(int), 1, clientes);
 
-            //printf("%d\n", checagem->prox);
-
-            if (checagem->estado == 0) {
-                validade = 2;
-            } else if (checagem->prox == -1) {
-                //printf("final da fila encontrado");
+            if(checagem->estado == 0){
                 validade = 1;
+            }
+            else if(checagem->prox == -1){
+                validade = 2;
                 rewind(clientes);
-                if(posicao != 0){
                 fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
-                }
                 fread(&checagem->chave, sizeof(int), 1, clientes);
                 fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
-                //printf("nome: %s \n", checagem->nome);
                 fread(&checagem->estado, sizeof(int), 1, clientes);
                 fwrite(&contador, sizeof(int), 1, clientes);
-            } else {
+                
+                /*if(posicao <= 7){ // Método alternativo
+                    validade = 2;
+                    rewind(clientes);
+                    posiantiga = posicao;
+                    posicao = posicao +( 7 - posicao);
+                    fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
+                    while(0<= fread(&checagem->chave, sizeof(int), 1, clientes)){
+                        fread(&checagem->chave, sizeof(int), 1, clientes);
+                        fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
+                        fread(&checagem->estado, sizeof(int), 1, clientes);
+                        fread(&checagem->prox, sizeof(int), 1, clientes);
+                        posicao += 1;
+                    }                    
+                }
+                else{
+                    validade = 3;
+                    rewind(clientes);
+                    fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
+                    fread(&checagem->chave, sizeof(int), 1, clientes);
+                    fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
+                    fread(&checagem->estado, sizeof(int), 1, clientes);
+                    fwrite()
+                }*/
+            }
+            else{
+                posiantiga = posicao;
                 posicao = checagem->prox;
             }
         }
-
         rewind(clientes);
-        if (validade == 2) {
+        if (validade == 1) {
             fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
             fwrite(&info->chave, sizeof(int), 1, clientes);
             fwrite(info->nome, sizeof(char), sizeof(info->nome), clientes);
             fwrite(&info->estado, sizeof(int), 1, clientes);
             printf("Cliente cadastrado com sucesso em uma posição vazia");
         }
-    }
-    rewind(clientes);
-    if (validade != 2) {
-        printf("\n> Final da fila encontrado ou não existe um inicio da hash!\n");
-        fseek(clientes, sizeof(Cliente) * contador, SEEK_SET);
-        fwrite(&info->chave, sizeof(int), 1, clientes);
-        fwrite(info->nome, sizeof(char), sizeof(info->nome), clientes);
-        fwrite(&info->estado, sizeof(int), 1, clientes);
-        fwrite(&info->prox, sizeof(int), 1, clientes);
-
-        rewind(clientes);
-        fseek(clientes, sizeof(Cliente) * contador, SEEK_SET);
-        fread(&checagem->chave, sizeof(int), 1, clientes);
-        fread(checagem->nome, sizeof(char), sizeof(info->nome), clientes);
-        fread(&checagem->estado, sizeof(int), 1, clientes);
-        fread(&checagem->prox, sizeof(int), 1, clientes);
-        //printf("chave: %d\n", checagem->chave);
-        //printf("chave: %s\n", checagem->nome);
-        if (validade == 0) { // Não existe cliente naquela hash
-            printf("> Aplicando posicao na hash...\n");
-            rewind(tabhash);
-            posicao = info->chave % TAMANHO_HASH;
-            //printf("Na posicao %d, esta escrito: ", posicao);
-            fseek(tabhash, sizeof(int) * (posicao), SEEK_SET);
-            fwrite(&contador, sizeof(int), 1, tabhash);
-            rewind(tabhash);
-            fseek(tabhash, sizeof(int) * (posicao), SEEK_SET);
-            fread(&valor, sizeof(int), 1, tabhash);
-            //printf("%d \n", valor);
+        else if(validade != 1){
+            printf("\n> Final da fila encontrado \n");
+            fseek(clientes, sizeof(Cliente) * contador, SEEK_SET);
+            fwrite(&info->chave, sizeof(int), 1, clientes);
+            fwrite(info->nome, sizeof(char), sizeof(info->nome), clientes);
+            fwrite(&info->estado, sizeof(int), 1, clientes);
+            fwrite(&info->prox, sizeof(int), 1, clientes);
+            contador = contador + 1;
+            //printf("contador: %d \n", contador);
+            rewind(meta);
+            fwrite(&contador, sizeof(int), 1, meta);
+            rewind(meta);
+            fread(&contador, sizeof(int), 1, meta);
+            printf("> Contador do metadados: %d \n", contador);
+            printf("\nCliente cadastrado(a) com sucesso! \n");
         }
-        contador = contador + 1;
-        //printf("contador: %d \n", contador);
-        rewind(meta);
-        fwrite(&contador, sizeof(int), 1, meta);
-        rewind(meta);
-        fread(&contador, sizeof(int), 1, meta);
-        printf("> Contador do metadados: %d \n", contador);
-        printf("\nCliente cadastrado(a) com sucesso! \n");
     }
-    free(checagem);
-    //free(info);
+    free(contagem);   
 }
+
 
 void deletar(FILE *hash, FILE *meta, FILE *clientes, int chave){
     int validade = 0, proximo;
@@ -190,10 +183,9 @@ void deletar(FILE *hash, FILE *meta, FILE *clientes, int chave){
 
     fseek(hash, sizeof(int) * (posicao), SEEK_SET);
 
-    fread(&posicao, sizeof(int), 1, hash);
     //printf("%d", posicao);
     printf("\n> Procurando cliente...\n");
-    if (posicao != -1) {
+    if (-1 <= fread(&atual->chave, sizeof(int), 1, clientes) ) {
         while (validade == 0) {
             rewind(clientes);
             fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
@@ -208,6 +200,7 @@ void deletar(FILE *hash, FILE *meta, FILE *clientes, int chave){
                 strcpy(atual->nome, "----");
                 atual->estado = 0;
                 proximo = atual->prox;
+
                 rewind(clientes);
                 fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
 
@@ -249,7 +242,7 @@ void zerar(FILE *tabhash, FILE *meta, FILE *clientes){
     FILE *nhash;
     FILE *nmeta;
     FILE *nclientes;
-    int contador = 0;
+    int contador = 7;
     int novo;
     int a = -1;
     int b;
