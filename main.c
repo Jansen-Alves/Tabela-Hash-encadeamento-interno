@@ -4,13 +4,13 @@
 #include "compartimento_hash.h"
 
 
-void menu(FILE *hash, FILE *meta, FILE *clientes){
+void menu(FILE *meta, FILE *clientes){
     int escolha, chave;
     char nome[100];
     Cliente *novo;
 
 
-    printf("-------------Menu-------------\n 1 - Inserção \n 2 - Deletar \n 3 - Busca \n 4 - Zerar \n 5 - Mostrar tabela Hash e Metadados \n 6 - Sair \n -----------------------------");
+    printf("-------------Menu-------------\n 1 - Inserção \n 2 - Deletar \n 3 - Busca \n 4 - Zerar  \n 5 - Mostrar registros  \n 6 - Sair \n -----------------------------");
     printf("\nDigite uma das opcoes acima:");
     scanf("%d", &escolha);
     switch (escolha)
@@ -21,9 +21,8 @@ void menu(FILE *hash, FILE *meta, FILE *clientes){
         printf("Digite o nome do cliente que você deseja inserir:\n");
         scanf("%s", nome);
         novo = criarCliente(chave, nome);
-        inserir(hash, meta, clientes, novo);
+        inserir(meta, clientes, novo);
         free(novo);
-        fclose(hash);
         fclose(meta);
         fclose(clientes);
         //printf("fechando arquivos e ponteiros");
@@ -31,10 +30,9 @@ void menu(FILE *hash, FILE *meta, FILE *clientes){
     case (2):
         printf("Digite a chave do cliente que você quer deletar:\n");
         scanf("%d", &chave);
-        deletar( hash, meta, clientes, chave);
+        deletar(meta, clientes, chave);
         //menu(hash, meta, clientes);
         free(novo);
-        fclose(hash);
         fclose(meta);
         fclose(clientes);
         break;
@@ -42,17 +40,21 @@ void menu(FILE *hash, FILE *meta, FILE *clientes){
         printf("Digite a chave do cliente que você quer buscar:\n");
         scanf("%d", &chave);
 
-        novo = busca(hash, clientes, chave);
+        novo = busca(clientes, chave);
         if(novo->chave == -1){
             printf("Cliente não encontrado,por favor insira ele na Hash primeiro");
         }
         else{
             printf("> Chave do cliente: %d \n", novo->chave);
             printf("> Nome do cliente: %s \n", novo->nome);
-            printf("> Proximo cliente dessa faixa se encontra no ' %d ' lugar", novo->prox);
+            if(novo->prox != -1){
+                printf("> Proximo cliente dessa faixa se encontra no ' %d ' lugar", novo->prox);
+            }
+            else{
+                print("Esse cliente se encontra no final da fila");
+            }
         }
         free(novo);
-        fclose(hash);
         fclose(meta);
         fclose(clientes);
         break;
@@ -62,11 +64,10 @@ void menu(FILE *hash, FILE *meta, FILE *clientes){
 
         break;
     case(5):
-        lerarqs(hash, meta);
+        mostrarRegs(clientes, meta);
         break;
     case (6):
         free(novo);
-        fclose(hash);
         fclose(meta);
         fclose(clientes);
         exit(1);
@@ -79,14 +80,9 @@ void menu(FILE *hash, FILE *meta, FILE *clientes){
 }
 
 int main(){
-    FILE *hash;
     FILE *meta;
     FILE *clientes;
 
-    if ((hash = fopen("tabHash.dat", "r+b")) == NULL){
-    printf("Erro ao abrir o arquivo da tabela Hash");
-    exit(1);
-    }
     if ((meta = fopen("meta.dat", "r+b")) == NULL){
     printf("Erro ao abrir o arquivo da tabela Meta");
     exit(1);
@@ -97,7 +93,7 @@ int main(){
     exit(1);
     }
 
-    menu(hash, meta, clientes);
+    menu(meta, clientes);
 
     return 0;
 }
