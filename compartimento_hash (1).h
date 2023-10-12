@@ -26,15 +26,10 @@ Cliente *busca(FILE*clientes, int chave){
 
     int posicao = chave % TAMANHO_HASH;
     //printf("Fazendo busca\n");
-    if (posicao == 0) {
-        fread(&posicao, sizeof(int), 1, tabhash);
-    } else {
-        fseek(tabhash, sizeof(int) * posicao, SEEK_SET);
-        fread(&posicao, sizeof(int), 1, tabhash);
-       //printf("li posicao a posicao: %d\n", posicao);
-    }
-    //printf("li a posicao %d \n", posicao);
-    if (posicao != -1) {
+    
+    fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
+   
+    if (-1 <=  fread(&procurado->chave, sizeof(int), 1, clientes);) {
         while (validade == 0) {
             rewind(clientes);
             fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
