@@ -233,6 +233,37 @@ void lerarqs(FILE *tabhash, FILE *meta){
     printf("Contador: %d", contador);
 }
 
+void mostrarRegistros(FILE *clientes, FILE*meta){
+    Cliente *reg = (Cliente *)malloc(sizeof(Cliente));
+    int contador, i = 0;
+
+    rewind(meta);
+    fread(&contador, sizeof(int), 1, meta);
+    if(contador == 0){
+        printf("Não existe nenhum registro de clientes nesse arquivo");
+        free(reg);
+        return;
+    }
+    print("REGISTROS");
+    rewind(clientes);
+    for(i = 0; i<contador; i++){ 
+        if(-1 >= fread(reg->chave, sizeof(int), 1, cliente)){   
+            continue;
+        }
+        fread(reg->nome, sizeof(char), sizeof(atual->nome), clientes);
+        fread(&reg->estado, sizeof(int), 1, clientes);
+        fread(&reg->prox, sizeof(int), 1, clientes);
+        print("--------------------------------------------------")
+        printf("Posição: %d", i);
+        print("Cliente: %s", reg->nome);
+        print("Chave do cliente: %d", reg->chave);
+        print("Posição do próximo cliente dessa fila encadeada: %d", reg->prox);
+
+    }
+    free(reg);
+}
+
+
 void zerar(FILE *tabhash, FILE *meta, FILE *clientes){
     FILE *nhash;
     FILE *nmeta;
