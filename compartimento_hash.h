@@ -26,11 +26,13 @@ Cliente *busca(FILE*clientes, int chave){
 
     int posicao = chave % TAMANHO_HASH;
     //printf("Fazendo busca\n");
-    
+    rewind(clientes);
     fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
+    fread(&procurado->chave, sizeof(int), 1, clientes);
    
-    if (-1 <=  fread(&procurado->chave, sizeof(int), 1, clientes)) {
+    if (procurado->chave != -1) {
         while (validade == 0) {
+            printf("Busca: Procurando cliente...\n");
             rewind(clientes);
             fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
 
@@ -82,15 +84,15 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
     posiantiga = posicao;
     rewind(clientes);
     fseek(clientes, sizeof(Cliente) * (posicao), SEEK_SET);
-    if(0 >= fread(&checagem->chave, sizeof(int), 1, clientes)){
+    fread(&checagem->chave, sizeof(int), 1, clientes);
+    if(checagem->chave == -1){
         rewind(clientes);
-        fseek(clientes, sizeof(int) * (posicao), SEEK_SET);
+        fseek(clientes, sizeof(Cliente) * (posicao), SEEK_SET);
         fwrite(&info->chave, sizeof(int), 1, clientes);
         fwrite(info->nome, sizeof(char), sizeof(info->nome), clientes);
         fwrite(&info->estado, sizeof(int), 1, clientes);
-        fwrite(&info->estado, sizeof(int), 1, clientes);
-    }
-    else{
+        fwrite(&info->prox, sizeof(int), 1, clientes);
+    } else{
         while(validade == 0){
             rewind(clientes);
             fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
@@ -245,21 +247,24 @@ void mostrarRegistros(FILE *clientes, FILE*meta){
         free(reg);
         return;
     }
-    printf("REGISTROS");
+    printf("\nREGISTROS\n");
     rewind(clientes);
-    for(i = 0; i<contador; i++){ 
-        if(-1 >= fread(reg->chave, sizeof(int), 1, clientes)){   
+    
+    for(i = 0; i < contador; i++){ 
+        rewind(clientes);
+        fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
+        fread(&reg->chave, sizeof(int), 1, clientes);
+        if(reg->chave < 0){   
             continue;
         }
         fread(reg->nome, sizeof(char), sizeof(reg->nome), clientes);
         fread(&reg->estado, sizeof(int), 1, clientes);
         fread(&reg->prox, sizeof(int), 1, clientes);
-        printf("--------------------------------------------------");
-        printf("Posição: %d", i);
-        printf("Cliente: %s", reg->nome);
-        printf("Chave do cliente: %d", reg->chave);
-        printf( "Posição do próximo cliente dessa fila encadeada: %d", reg->prox);
-
+        printf("--------------------------------------------------\n");
+        printf("Posição: %d\n", i);
+        printf("Cliente: %s\n", reg->nome);
+        printf("Chave do cliente: %d\n", reg->chave);
+        printf( "Posição do próximo cliente dessa fila encadeada: %d\n", reg->prox);
     }
     free(reg);
 }

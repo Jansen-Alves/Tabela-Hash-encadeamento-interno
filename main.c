@@ -48,6 +48,7 @@ void menu(FILE *meta, FILE *clientes){
             printf("> Chave do cliente: %d \n", novo->chave);
             printf("> Nome do cliente: %s \n", novo->nome);
             if(novo->prox != -1){
+                printf("%d", novo->prox);
                 printf("> Proximo cliente dessa faixa se encontra no ' %d ' lugar", novo->prox);
             }
             else{
