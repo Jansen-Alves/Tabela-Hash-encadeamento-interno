@@ -51,7 +51,7 @@ void menu(FILE *meta, FILE *clientes){
                 printf("> Proximo cliente dessa faixa se encontra no ' %d ' lugar", novo->prox);
             }
             else{
-                print("Esse cliente se encontra no final da fila");
+                printf("Esse cliente se encontra no final da fila");
             }
         }
         free(novo);
@@ -59,12 +59,12 @@ void menu(FILE *meta, FILE *clientes){
         fclose(clientes);
         break;
     case (4):
-        zerar(hash, meta, clientes);
+        zerar(meta, clientes);
         free(novo);
 
         break;
     case(5):
-        mostrarRegs(clientes, meta);
+        mostrarRegistros(clientes, meta);
         break;
     case (6):
         free(novo);
