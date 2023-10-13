@@ -102,7 +102,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             fread(&checagem->estado, sizeof(int), 1, clientes);
             fread(&checagem->prox, sizeof(int), 1, clientes);
             printf("\nAQUI %d", i);
-            if(i > contador){
+            if(i >= contador){
                 validade = 3;
                 break;
             } else if(checagem->estado == 0){
@@ -114,9 +114,10 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                     pos = i+1;
                     validade = 2;
                     rewind(clientes);
-                    fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
+                    fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
                     fread(&checagem->chave, sizeof(int), 1, clientes);
                     fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
+                    printf("\n nome: %s",checagem->nome);
                     fread(&checagem->estado, sizeof(int), 1, clientes);
                     fwrite(&pos, sizeof(int), 1, clientes);
                     printf("\n POS : %d",pos);
@@ -153,6 +154,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                 posicao = checagem->prox;
             }
         }
+        printf("\nvalidade: %d", validade);
         rewind(clientes);
         if (validade == 1) {
             fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
@@ -161,7 +163,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             fwrite(&info->estado, sizeof(int), 1, clientes);
             printf("Cliente cadastrado com sucesso em uma posição vazia");
         }
-        else if(validade != 1){
+        else if(validade != 1 && validade != 3){
             printf("\n> Final da fila encontrado \n");
             fseek(clientes, sizeof(Cliente) * pos, SEEK_SET);
             fwrite(&info->chave, sizeof(int), 1, clientes);
@@ -171,6 +173,8 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             //contador = contador + 1;
             //printf("contador: %d \n", contador);
             printf("\nCliente cadastrado(a) com sucesso! \n");
+        } else if(validade == 3){
+            printf("\n> Overflow: hash lotada \n");
         }
     }
     free(checagem);   
@@ -188,7 +192,8 @@ void deletar(FILE *meta, FILE *clientes, int chave){
 
     //printf("%d", posicao);
     printf("\n> Procurando cliente...\n");
-    if (-1 <= fread(&atual->chave, sizeof(int), 1, clientes) ) {
+    fread(&atual->chave, sizeof(int), 1, clientes);
+    if (atual->chave != -1) {
         while (validade == 0) {
             rewind(clientes);
             fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
