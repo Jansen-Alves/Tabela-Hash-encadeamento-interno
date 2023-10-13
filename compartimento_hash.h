@@ -65,7 +65,7 @@ Cliente *busca(FILE*clientes, int chave){
 }
 
 void inserir(FILE *meta, FILE *clientes, Cliente *info){
-    int posicao, contador, valor, posiantiga;
+    int posicao, contador, valor, i;
     int validade = 0;
     Cliente *checagem = (Cliente *)malloc(sizeof(Cliente));
     posicao = info->chave % TAMANHO_HASH;
@@ -81,7 +81,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
     rewind(meta);
     fread(&contador, sizeof(int), 1, meta);
     
-    posiantiga = posicao;
+    i = posicao;
     rewind(clientes);
     fseek(clientes, sizeof(Cliente) * (posicao), SEEK_SET);
     fread(&checagem->chave, sizeof(int), 1, clientes);
@@ -94,8 +94,6 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
         fwrite(&info->prox, sizeof(int), 1, clientes);
     } else{
         while(validade == 0){
-            rewind(clientes);
-            fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
             fread(&checagem->chave, sizeof(int), 1, clientes);
             fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
             //printf("nome na fila: %s \n", checagem->nome);
@@ -106,14 +104,18 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                 validade = 1;
             }
             else if(checagem->prox == -1){
-                validade = 2;
-                rewind(clientes);
-                fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
-                fread(&checagem->chave, sizeof(int), 1, clientes);
-                fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
-                fread(&checagem->estado, sizeof(int), 1, clientes);
-                fwrite(&contador, sizeof(int), 1, clientes);
-                
+                if(i<contador){
+                    validade = 2;
+                    rewind(clientes);
+                    fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
+                    fread(&checagem->chave, sizeof(int), 1, clientes);
+                    fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
+                    fread(&checagem->estado, sizeof(int), 1, clientes);
+                    fwrite(&i+1, sizeof(int), 1, clientes);
+                }
+                else{
+                    validade = 3;
+                }
                 /*if(posicao <= 7){ // Método alternativo
                     validade = 2;
                     rewind(clientes);
@@ -139,7 +141,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                 }*/
             }
             else{
-                posiantiga = posicao;
+                i = i+1;
                 posicao = checagem->prox;
             }
         }
