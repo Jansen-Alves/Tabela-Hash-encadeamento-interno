@@ -110,7 +110,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             } else if(checagem->prox == -1){
 
                 if(i<contador){
-                    printf("\ninserçaõ !!!!!");
+                    printf("\ninserção !!!!!");
                     pos = i+1;
                     validade = 2;
                     rewind(clientes);
@@ -215,6 +215,15 @@ void deletar(FILE *meta, FILE *clientes, int chave){
                 fwrite(&atual->chave, sizeof(int), 1, clientes);
                 fwrite(atual->nome, sizeof(char), sizeof(atual->nome), clientes);
                 fwrite(&atual->estado, sizeof(int), 1, clientes);
+
+                rewind(clientes);
+                fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
+
+                fread(&atual->chave, sizeof(int), 1, clientes);
+                fread(atual->nome, sizeof(char), sizeof(atual->nome), clientes);
+                fread(&atual->estado, sizeof(int), 1, clientes);
+
+                printf("Estado do cliente deletado: %d", atual->atual);
 
                 printf("\nCliente deletado com sucesso!\n");
                 return;
