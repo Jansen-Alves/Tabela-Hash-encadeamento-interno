@@ -14,17 +14,30 @@ typedef struct Cliente {
     int prox;
 } Cliente;
 
-Cliente *criarCliente(int chavecliente, char *nomecliente) {
+Cliente *criarCliente(int chavecliente, const char *nomecliente) {
     Cliente *novo = (Cliente *)malloc(sizeof(Cliente));
     if (novo) {
         novo->chave = chavecliente;
-        strcpy(novo->nome, nomecliente);
+        strncpy(novo->nome, nomecliente, sizeof(novo->nome) - 1);
+        novo->nome[sizeof(novo->nome) - 1] = '\0';  // Garante que a string seja terminada corretamente
         novo->estado = 1;
         novo->prox = -1;
         printf("\n> Novo cliente criado\n");
     }
     return novo;
 }
+
+    // Cliente *criarCliente(int chavecliente, char *nomecliente) {
+    //     Cliente *novo = (Cliente *)malloc(sizeof(Cliente));
+    //     if (novo) {
+    //         novo->chave = chavecliente;
+    //         strcpy(novo->nome, nomecliente);
+    //         novo->estado = 1;
+    //         novo->prox = -1;
+    //         printf("\n> Novo cliente criado\n");
+    //     }
+    //     return novo;
+    // }
 
 Cliente *busca(FILE *clientes, int chave) {
     int posicao = chave % TAMANHO_HASH;
