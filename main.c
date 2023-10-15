@@ -9,8 +9,8 @@ void menu(FILE *meta, FILE *clientes){
     char nome[100];
     Cliente *novo;
 
-    while(1){
-        printf("-------------Menu-------------\n 1 - Inserção \n 2 - Deletar \n 3 - Busca \n 4 - Zerar  \n 5 - Mostrar registros  \n 6 - Sair \n -----------------------------");
+    //while(1){
+        printf("\n-------------Menu-------------\n 1 - Inserção \n 2 - Deletar \n 3 - Busca \n 4 - Zerar  \n 5 - Mostrar registros  \n 6 - Sair \n -----------------------------");
         printf("\nDigite uma das opcoes acima:");
         scanf("%d", &escolha);
         switch (escolha)
@@ -69,7 +69,7 @@ void menu(FILE *meta, FILE *clientes){
             printf("Escolha um dos números do menu\n");
             break;
         }
-    }
+    
 }
 
 int main(){

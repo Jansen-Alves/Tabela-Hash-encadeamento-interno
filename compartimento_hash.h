@@ -98,8 +98,9 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
         while(validade == 0){
             fread(&checagem->chave, sizeof(int), 1, clientes);
             fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
-            //printf("nome na fila: %s \n", checagem->nome);
+            printf("nome na fila: %s \n", checagem->nome);
             fread(&checagem->estado, sizeof(int), 1, clientes);
+            printf("estado na fila: %d \n", checagem->estado);
             fread(&checagem->prox, sizeof(int), 1, clientes);
             printf("\nAQUI %d", i);
             if(i >= contador){
