@@ -96,11 +96,13 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
         fwrite(&info->prox, sizeof(int), 1, clientes);
     } else{
         while(validade == 0){
+            rewind(clientes);
+            fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
             fread(&checagem->chave, sizeof(int), 1, clientes);
             fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
-            printf("nome na fila: %s \n", checagem->nome);
+            //printf("nome na fila: %s \n", checagem->nome);
             fread(&checagem->estado, sizeof(int), 1, clientes);
-            printf("estado na fila: %d \n", checagem->estado);
+            //printf("estado na fila: %d \n", checagem->estado);
             fread(&checagem->prox, sizeof(int), 1, clientes);
             printf("\nAQUI %d", i);
             if(i >= contador){
