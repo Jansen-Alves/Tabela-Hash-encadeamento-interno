@@ -54,8 +54,7 @@ Cliente *busca(FILE*clientes, int chave){
                 printf("Busca: Chegamos ao fim da fila \n");
             } else {
                 posicao = procurado->prox;
-
-                printf("%d \n", posicao);
+                //printf("%d \n", posicao);
             }
         }
         return procurado;
@@ -86,7 +85,6 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
     
     i = posicao;
 
-    
     rewind(clientes);
     fseek(clientes, sizeof(Cliente) * (posicao), SEEK_SET);
     fread(&checagem->chave, sizeof(int), 1, clientes);
@@ -107,7 +105,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             fread(&checagem->estado, sizeof(int), 1, clientes);
             //printf("estado na fila: %d \n", checagem->estado);
             fread(&checagem->prox, sizeof(int), 1, clientes);
-            printf("\nAQUI %d", i);
+            //printf("\nAQUI %d", i);
             if(i >= contador){
                 validade = 3;
                 break;
@@ -116,51 +114,28 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             } else if(checagem->prox == -1){
 
                 if(i<contador){
-                    printf("\ninserção !!!!!");
+                    //printf("\ninserção !!!!!");
                     pos = i+1;
                     validade = 2;
                     rewind(clientes);
                     fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
                     fread(&checagem->chave, sizeof(int), 1, clientes);
                     fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
-                    printf("\n nome: %s",checagem->nome);
+                    //printf("\n nome: %s",checagem->nome);
                     fread(&checagem->estado, sizeof(int), 1, clientes);
                     fwrite(&pos, sizeof(int), 1, clientes);
-                    printf("\n POS : %d",pos);
+                    //printf("\n POS : %d",pos);
                 }
                 else{
                     validade = 3;
                 }
-                /*if(posicao <= 7){ // Método alternativo
-                    validade = 2;
-                    rewind(clientes);
-                    posiantiga = posicao;
-                    posicao = posicao +( 7 - posicao);
-                    fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
-                    while(0<= fread(&checagem->chave, sizeof(int), 1, clientes)){
-                        fread(&checagem->chave, sizeof(int), 1, clientes);
-                        fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
-                        fread(&checagem->estado, sizeof(int), 1, clientes);
-                        fread(&checagem->prox, sizeof(int), 1, clientes);
-                        posicao += 1;
-                    }                    
-                }
-                else{
-                    validade = 3;
-                    rewind(clientes);
-                    fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
-                    fread(&checagem->chave, sizeof(int), 1, clientes);
-                    fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
-                    fread(&checagem->estado, sizeof(int), 1, clientes);
-                    fwrite()
-                }*/
             }
             else{
                 i = i+1;
                 posicao = checagem->prox;
             }
         }
-        printf("\nvalidade: %d", validade);
+        //printf("\nvalidade: %d", validade);
         rewind(clientes);
         if (validade == 1) {
             fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
@@ -246,20 +221,6 @@ void deletar(FILE *meta, FILE *clientes, int chave){
     }
     free(atual);
 }
-
-/*void lerarqs(FILE *tabhash, FILE *meta){
-    int contador;
-    int b;
-    rewind(tabhash);
-    printf("\n");
-    for (int i = 0; i < TAMANHO_HASH; i++) {
-        fread(&b, sizeof(int), 1, tabhash);
-        printf("hash %d: %d \n", i, b);
-    }
-    rewind(meta);
-    fread(&contador, sizeof(int), 1, meta);
-    printf("Contador: %d", contador);
-}*/
 
 void mostrarRegistros(FILE *clientes, FILE*meta){
     Cliente *reg = (Cliente *)malloc(sizeof(Cliente));
