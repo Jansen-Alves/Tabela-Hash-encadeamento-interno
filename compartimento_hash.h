@@ -65,7 +65,7 @@ Cliente *busca(FILE*clientes, int chave){
 }
 
 void inserir(FILE *meta, FILE *clientes, Cliente *info){
-    int posicao, contador, valor, i, pos;
+    int posicao, contador, valor, i;
     int validade = 0;
     Cliente *checagem = (Cliente *)malloc(sizeof(Cliente));
     posicao = info->chave % TAMANHO_HASH;
@@ -122,7 +122,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                     fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
                     printf("\n nome: %s",checagem->nome);
                     fread(&checagem->estado, sizeof(int), 1, clientes);
-                    fwrite(&pos, sizeof(int), 1, clientes);
+                    fwrite(&posicao, sizeof(int), 1, clientes);
                     printf("\n POS : %d",posicao);
                 }
                 else{
