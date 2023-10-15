@@ -223,7 +223,7 @@ void deletar(FILE *meta, FILE *clientes, int chave){
                 fread(atual->nome, sizeof(char), sizeof(atual->nome), clientes);
                 fread(&atual->estado, sizeof(int), 1, clientes);
 
-                printf("Estado do cliente deletado: %d", atual->atual);
+                printf("Estado do cliente deletado: %d", atual->estado);
 
                 printf("\nCliente deletado com sucesso!\n");
                 return;
