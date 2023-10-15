@@ -109,12 +109,12 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                 validade = 3;
                 break;
             } else if(checagem->estado == 0){
+                printf("Local vago encontrado");
                 validade = 1;
             } else if(checagem->prox == -1){
-
                 if(i<contador){
-                    printf("\ninserção !!!!!");
-                    pos = i+1;
+                    printf("\n> Final da fila encontrado \n");
+                    posicao = i+1;
                     validade = 2;
                     rewind(clientes);
                     fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
@@ -123,7 +123,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                     printf("\n nome: %s",checagem->nome);
                     fread(&checagem->estado, sizeof(int), 1, clientes);
                     fwrite(&pos, sizeof(int), 1, clientes);
-                    printf("\n POS : %d",pos);
+                    printf("\n POS : %d",posicao);
                 }
                 else{
                     validade = 3;
@@ -159,22 +159,14 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
         }
         printf("\nvalidade: %d", validade);
         rewind(clientes);
-        if (validade == 1) {
-            fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
-            fwrite(&info->chave, sizeof(int), 1, clientes);
-            fwrite(info->nome, sizeof(char), sizeof(info->nome), clientes);
-            fwrite(&info->estado, sizeof(int), 1, clientes);
-            printf("Cliente cadastrado com sucesso em uma posição vazia");
-        }
-        else if(validade != 1 && validade != 3){
-            printf("\n> Final da fila encontrado \n");
-            fseek(clientes, sizeof(Cliente) * pos, SEEK_SET);
-            fwrite(&info->chave, sizeof(int), 1, clientes);
-            fwrite(info->nome, sizeof(char), sizeof(info->nome), clientes);
-            fwrite(&info->estado, sizeof(int), 1, clientes);
+        
+        fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
+        fwrite(&info->chave, sizeof(int), 1, clientes);
+        fwrite(info->nome, sizeof(char), sizeof(info->nome), clientes);
+        fwrite(&info->estado, sizeof(int), 1, clientes);
+        printf("Cliente cadastrado com sucesso em uma posição vazia");
+        if(validade == 2){    
             fwrite(&info->prox, sizeof(int), 1, clientes);
-            //contador = contador + 1;
-            //printf("contador: %d \n", contador);
             printf("\nCliente cadastrado(a) com sucesso! \n");
         } else if(validade == 3){
             printf("\n> Overflow: hash lotada \n");
@@ -293,7 +285,7 @@ void mostrarRegistros(FILE *clientes, FILE*meta){
 
 
 void zerar(FILE *meta, FILE *clientes){
-    int contador = 7;
+    int contador = TAMANHO_HASH;
     int novo;
     int a = -1;
     int b;
