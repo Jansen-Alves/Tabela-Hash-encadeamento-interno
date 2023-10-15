@@ -47,12 +47,15 @@ Cliente *busca(FILE*clientes, int chave){
 
             if (procurado->chave == chave) {
                 validade = 1;
+                printf("Busca: Cliente encontrado\n");
             } else if (procurado->prox == -1) {
                 validade = -1;
                 procurado->chave = -1;
-               // printf("Busca: Chegamos ao fim da fila \n");
+                printf("Busca: Chegamos ao fim da fila \n");
             } else {
                 posicao = procurado->prox;
+
+                printf("%d \n", posicao);
             }
         }
         return procurado;
@@ -293,10 +296,11 @@ void mostrarRegistros(FILE *clientes, FILE*meta){
 
 
 void zerar(FILE *meta, FILE *clientes){
-    int contador = 7;
+    int contador = TAMANHO_HASH;
     int novo;
     int a = -1;
     int b;
+
 
     fclose(meta);
     fclose(clientes);

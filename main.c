@@ -54,7 +54,6 @@ void menu(FILE *meta, FILE *clientes){
         case (4):
             zerar(meta, clientes);
             free(novo);
-    
             break;
         case(5):
             mostrarRegistros(clientes, meta);
