@@ -67,7 +67,7 @@ Cliente *busca(FILE*clientes, int chave){
 }
 
 void inserir(FILE *meta, FILE *clientes, Cliente *info){
-    int posicao, contador, valor, i, pos;
+    int posicao, contador, valor, i, pxchave;
     int validade = 0;
     Cliente *checagem = (Cliente *)malloc(sizeof(Cliente));
     posicao = info->chave % TAMANHO_HASH;
@@ -106,15 +106,15 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             printf("estado na fila: %d \n", checagem->estado);
             fread(&checagem->prox, sizeof(int), 1, clientes);
             printf("\nAQUI %d", i);
-            printf("COntador: %d", contador);
+            printf("COntador: %d \n", contador);
+            fread(&pxchave, sizeof(int), 1, clientes);
+            printf("chave do proximo cliente: %d \n", pxchave);
             if(i + 1 >= contador ){
                 validade = 3;
                 break;
             } else if(checagem->estado == 0){
                 validade = 1;
-            } else if(checagem->prox == -1){
-                fread(&checagem->chave, sizeof(int), 1, clientes);
-                if(checagem->chave == -1){
+            } else if(checagem->prox == -1 && pxchave == -1){
                     if(i<contador){
                     //printf("\ninserção !!!!!");
                     pos = i+1;
@@ -128,13 +128,9 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                     fwrite(&pos, sizeof(int), 1, clientes);
                     //printf("\n POS : %d",pos);
                     }
-                else{
+                    else{
                     validade = 3;
                     }
-                }
-                else{
-                    validade = 3;
-                }
             }
             else{
                 i = i+1;
