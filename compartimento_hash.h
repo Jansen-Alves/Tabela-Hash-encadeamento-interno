@@ -101,14 +101,14 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
             fread(&checagem->chave, sizeof(int), 1, clientes);
             fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
-            printf("nome na fila: %s \n", checagem->nome);
+            //printf("nome na fila: %s \n", checagem->nome);
             fread(&checagem->estado, sizeof(int), 1, clientes);
-            printf("estado na fila: %d \n", checagem->estado);
+            //printf("estado na fila: %d \n", checagem->estado);
             fread(&checagem->prox, sizeof(int), 1, clientes);
-            printf("\nAQUI %d", i);
-            printf("COntador: %d \n", contador);
+            //printf("\nAQUI %d", i);
+            //printf("COntador: %d \n", contador);
             fread(&pxchave, sizeof(int), 1, clientes);
-            printf("chave do proximo cliente: %d \n", pxchave);
+            //printf("chave do proximo cliente: %d \n", pxchave);
             if(i + 1 >= contador ){
                 validade = 3;
                 break;
@@ -117,7 +117,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             } else if(checagem->prox == -1 && pxchave == -1){
                     if(i<contador){
                     //printf("\ninserção !!!!!");
-                    pos = i+1;
+                    posicao = i+1;
                     validade = 2;
                     rewind(clientes);
                     fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
@@ -125,7 +125,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                     fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
                     //printf("\n nome: %s",checagem->nome);
                     fread(&checagem->estado, sizeof(int), 1, clientes);
-                    fwrite(&pos, sizeof(int), 1, clientes);
+                    fwrite(&posicao, sizeof(int), 1, clientes);
                     //printf("\n POS : %d",pos);
                     }
                     else{
@@ -148,7 +148,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
         }
         else if(validade != 1 && validade != 3){
             printf("\n> Final da fila encontrado \n");
-            fseek(clientes, sizeof(Cliente) * pos, SEEK_SET);
+            fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
             fwrite(&info->chave, sizeof(int), 1, clientes);
             fwrite(info->nome, sizeof(char), sizeof(info->nome), clientes);
             fwrite(&info->estado, sizeof(int), 1, clientes);
@@ -353,9 +353,10 @@ void zerar(FILE *meta, FILE *clientes){
     rewind(meta);
 
     fread(&novo, sizeof(int), 1 ,meta);
-    printf("> Contador: %d\n", novo);
+
+    printf("\n\n> Contador: %d\n", novo);
     printf("> Tabela Clientes zerada\n");
-    printf("Arquivos zerados com sucesso!");
+    printf("Arquivos zerados com sucesso!\n\n");
 
     /*for (int i = 0; i < TAMANHO_HASH; i++) {
         rewind(clientes);
