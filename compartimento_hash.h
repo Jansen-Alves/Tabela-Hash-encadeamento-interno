@@ -29,10 +29,10 @@ Cliente *busca(FILE*clientes, int chave){
     rewind(clientes);
     fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
     fread(&procurado->chave, sizeof(int), 1, clientes);
-   
+
     if (procurado->chave != -1) {
         while (validade == 0) {
-            printf("Busca: Procurando cliente...\n");
+            //printf("Busca: Procurando cliente...\n");
             rewind(clientes);
             fseek(clientes, sizeof(Cliente) * posicao, SEEK_SET);
 
@@ -101,19 +101,21 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
             fread(&checagem->chave, sizeof(int), 1, clientes);
             fread(checagem->nome, sizeof(char), sizeof(checagem->nome), clientes);
-            //printf("nome na fila: %s \n", checagem->nome);
+            printf("nome na fila: %s \n", checagem->nome);
             fread(&checagem->estado, sizeof(int), 1, clientes);
-            //printf("estado na fila: %d \n", checagem->estado);
+            printf("estado na fila: %d \n", checagem->estado);
             fread(&checagem->prox, sizeof(int), 1, clientes);
-            //printf("\nAQUI %d", i);
-            if(i >= contador){
+            printf("\nAQUI %d", i);
+            printf("COntador: %d", contador);
+            if(i + 1 >= contador ){
                 validade = 3;
                 break;
             } else if(checagem->estado == 0){
                 validade = 1;
             } else if(checagem->prox == -1){
-
-                if(i<contador){
+                fread(&checagem->chave, sizeof(int), 1, clientes);
+                if(checagem->chave == -1){
+                    if(i<contador){
                     //printf("\ninserção !!!!!");
                     pos = i+1;
                     validade = 2;
@@ -125,6 +127,10 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                     fread(&checagem->estado, sizeof(int), 1, clientes);
                     fwrite(&pos, sizeof(int), 1, clientes);
                     //printf("\n POS : %d",pos);
+                    }
+                else{
+                    validade = 3;
+                    }
                 }
                 else{
                     validade = 3;
@@ -240,9 +246,9 @@ void mostrarRegistros(FILE *clientes, FILE*meta){
         rewind(clientes);
         fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
         fread(&reg->chave, sizeof(int), 1, clientes);
-        if(reg->chave < 0){   
+        /*if(reg->chave < 0){   
             continue;
-        }
+        }*/
         fread(reg->nome, sizeof(char), sizeof(reg->nome), clientes);
         fread(&reg->estado, sizeof(int), 1, clientes);
         fread(&reg->prox, sizeof(int), 1, clientes);
@@ -255,8 +261,7 @@ void mostrarRegistros(FILE *clientes, FILE*meta){
     free(reg);
 }
 
-
-void zerar(FILE *meta, FILE *clientes){
+/*void zerar(FILE *meta, FILE *clientes){
     int contador = TAMANHO_HASH;
     int novo;
     int a = -1;
@@ -264,17 +269,10 @@ void zerar(FILE *meta, FILE *clientes){
 
 
     fclose(meta);
-    fclose(clientes);
 
 
     if ((meta = fopen(METADADOS, "wb")) == NULL) {
         printf("Erro ao abrir o arquivo da tabela meta\n");
-        exit(1);
-    }
-
-
-    if ((clientes = fopen(REGISTRO_CLIENTE, "wb")) == NULL) {
-        printf("Erro ao abrir o arquivo da tabela cliente\n");
         exit(1);
     }
 
@@ -301,10 +299,75 @@ void zerar(FILE *meta, FILE *clientes){
     printf("> Contador: %d\n", novo);
     printf("> Tabela Clientes zerada\n");
     printf("Arquivos zerados com sucesso!");
-    fclose(clientes);
 
-    if ((clientes = fopen(REGISTRO_CLIENTE, "r+b")) == NULL) {
-        printf("Erro ao abrir o arquivo da tabela clientes\n");
+    for (int i = 0; i < TAMANHO_HASH; i++) {
+        rewind(clientes);
+        fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
+        fread(&b, sizeof(int), 1, clientes);
+        printf("Local da hash %d, recebe %d \n", i, b);
+    }
+    rewind(clientes);
+
+
+}*/
+
+
+void zerar(FILE *meta, FILE *clientes){
+    int contador = 7;
+    int novo;
+    int a = -1;
+    Cliente *atual = (Cliente *)malloc(sizeof(Cliente));
+    int b, estado, prox;
+
+    atual->chave = -1;
+    strcpy(atual->nome, "-----");
+    atual->estado = 0;
+    atual->prox = -1;
+    
+    
+
+
+    fclose(meta);
+
+
+    if ((meta = fopen(METADADOS, "wb")) == NULL) {
+        printf("Erro ao abrir o arquivo da tabela meta\n");
         exit(1);
     }
+
+    for (int i = 0; i < TAMANHO_HASH; i++) {
+        rewind(clientes);
+        fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
+        fwrite(&atual->chave, sizeof(int), 1, clientes);
+        fwrite(atual->nome, sizeof(Cliente), sizeof(atual->nome), clientes);
+        fwrite(&atual->estado, sizeof(int), 1, clientes);
+        fwrite(&atual->prox, sizeof(int), 1, clientes);
+    }
+
+    rewind(meta);
+    fwrite(&contador, sizeof(int), 1, meta);
+
+    fclose(meta);
+
+    if ((meta = fopen(METADADOS, "r+b")) == NULL) {
+        printf("Erro ao abrir o arquivo da tabela meta\n");
+        exit(1);
+    }
+
+    rewind(meta);
+
+    fread(&novo, sizeof(int), 1 ,meta);
+    printf("> Contador: %d\n", novo);
+    printf("> Tabela Clientes zerada\n");
+    printf("Arquivos zerados com sucesso!");
+
+    /*for (int i = 0; i < TAMANHO_HASH; i++) {
+        rewind(clientes);
+        fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
+        fread(&b, sizeof(int), 1, clientes);
+        printf("Local da hash %d, recebe %d \n", i, b);
+    }*/
+    rewind(clientes);
+    free(atual);
+
 }
