@@ -125,7 +125,9 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                         rewind(clientes);
                         fseek(clientes, sizeof(Cliente) * proxposi, SEEK_SET);
                         fread(&proxchave, sizeof(int), 1, clientes);
+                        if(proxchave != -1){
                         proxposi = proxposi +1;
+                        }
                     }
                     if(proxchave == -1){
                         posicao = proxposi;
