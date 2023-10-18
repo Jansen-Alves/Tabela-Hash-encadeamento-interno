@@ -119,14 +119,15 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                 if(pxchave != -1){
                     //printf("%d", pxchave);
                     proxposi = i; // vai rodar a lista até achar uma posição livre e gravar qual posicao é.
-                    while(proxchave != -1 && proxposi + 1 < contador){
-                        //printf("%d", proxposi);
+                    proxchave = pxchave;
+                    while(proxchave != -1 && proxposi < contador){
+                        printf("posicao pós fim da fila: %d \n", proxposi);
                         rewind(clientes);
                         fseek(clientes, sizeof(Cliente) * proxposi, SEEK_SET);
                         fread(&proxchave, sizeof(int), 1, clientes);
                         proxposi = proxposi +1;
                     }
-                    if(proxchave != -1){
+                    if(proxchave == -1){
                         posicao = proxposi;
                     }
                     else{
