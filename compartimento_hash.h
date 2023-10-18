@@ -117,11 +117,13 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             } else if(checagem->prox == -1){
                 
                 if(pxchave != -1){
+                    //printf("%d", pxchave);
                     proxposi = i; // vai rodar a lista até achar uma posição livre e gravar qual posicao é.
-                    while(proxchave != -1 && proxposi < contador){
+                    while(proxchave != -1 && proxposi + 1 < contador){
+                        //printf("%d", proxposi);
                         rewind(clientes);
                         fseek(clientes, sizeof(Cliente) * proxposi, SEEK_SET);
-                        fread(&proxchave, sizeof(int), 1, clientes;
+                        fread(&proxchave, sizeof(int), 1, clientes);
                         proxposi = proxposi +1;
                     }
                     if(proxchave != -1){
