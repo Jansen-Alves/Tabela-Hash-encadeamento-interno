@@ -67,7 +67,7 @@ Cliente *busca(FILE*clientes, int chave){
 }
 
 void inserir(FILE *meta, FILE *clientes, Cliente *info){
-    int posicao, contador, valor, i, pxchave;
+    int posicao, contador, valor, i, pxchave, proxchave, proxposi;
     int validade = 0;
     Cliente *checagem = (Cliente *)malloc(sizeof(Cliente));
     posicao = info->chave % TAMANHO_HASH;
@@ -114,10 +114,28 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                 break;
             } else if(checagem->estado == 0){
                 validade = 1;
-            } else if(checagem->prox == -1 && pxchave == -1){
-                    if(i<contador){
+            } else if(checagem->prox == -1){
+                
+                if(pxchave != -1){
+                    proxposi = i; // vai rodar a lista até achar uma posição livre e gravar qual posicao é.
+                    while(proxchave != -1 && proxposi < contador){
+                        rewind(clientes);
+                        fseek(clientes, sizeof(Cliente) * proxposi, SEEK_SET);
+                        fread(&proxchave, sizeof(int), 1, clientes;
+                        proxposi = proxposi +1;
+                    }
+                    if(proxchave != -1){
+                        posicao = proxposi;
+                    }
+                    else{
+                        validade = 3;
+                    }
+                }
+                else{
+                   posicao = i+1; 
+                }
+                    if(i<contador && validade != 3){
                     //printf("\ninserção !!!!!");
-                    posicao = i+1;
                     validade = 2;
                     rewind(clientes);
                     fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
