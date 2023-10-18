@@ -109,7 +109,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             //printf("COntador: %d \n", contador);
             fread(&pxchave, sizeof(int), 1, clientes);
             //printf("chave do proximo cliente: %d \n", pxchave);
-            if(i + 1 >= contador ){
+            if(i + 1 > contador ){
                 validade = 3;
                 break;
             } else if(checagem->estado == 0){
