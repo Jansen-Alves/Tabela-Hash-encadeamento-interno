@@ -67,7 +67,7 @@ Cliente *busca(FILE*clientes, int chave){
 }
 
 void inserir(FILE *meta, FILE *clientes, Cliente *info){
-    int posicao, contador, valor, i, pxchave;
+    int posicao, contador, valor, i, pxchave, proxchave, proxposi;
     int validade = 0;
     Cliente *checagem = (Cliente *)malloc(sizeof(Cliente));
     posicao = info->chave % TAMANHO_HASH;
@@ -109,15 +109,38 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
             //printf("COntador: %d \n", contador);
             fread(&pxchave, sizeof(int), 1, clientes);
             //printf("chave do proximo cliente: %d \n", pxchave);
-            if(i + 1 >= contador ){
+            if(i + 1 > contador ){
                 validade = 3;
                 break;
             } else if(checagem->estado == 0){
                 validade = 1;
-            } else if(checagem->prox == -1 && pxchave == -1){
-                    if(i<contador){
+            } else if(checagem->prox == -1){
+                
+                if(pxchave != -1){
+                    //printf("%d", pxchave);
+                    proxposi = i; // vai rodar a lista até achar uma posição livre e gravar qual posicao é.
+                    proxchave = pxchave;
+                    while(proxchave != -1 && proxposi < contador){
+                        printf("posicao pós fim da fila: %d \n", proxposi);
+                        rewind(clientes);
+                        fseek(clientes, sizeof(Cliente) * proxposi, SEEK_SET);
+                        fread(&proxchave, sizeof(int), 1, clientes);
+                        if(proxchave != -1){
+                        proxposi = proxposi +1;
+                        }
+                    }
+                    if(proxchave == -1){
+                        posicao = proxposi;
+                    }
+                    else{
+                        validade = 3;
+                    }
+                }
+                else{
+                   posicao = i+1; 
+                }
+                    if(i<contador && validade != 3){
                     //printf("\ninserção !!!!!");
-                    posicao = i+1;
                     validade = 2;
                     rewind(clientes);
                     fseek(clientes, sizeof(Cliente) * i, SEEK_SET);
@@ -133,7 +156,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                     }
             }
             else{
-                i = i+1;
+                i = checagem->prox;
                 posicao = checagem->prox;
             }
         }
