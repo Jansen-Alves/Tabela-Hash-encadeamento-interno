@@ -156,7 +156,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                     }
             }
             else{
-                i = i+1;
+                i = checagem->prox;
                 posicao = checagem->prox;
             }
         }
