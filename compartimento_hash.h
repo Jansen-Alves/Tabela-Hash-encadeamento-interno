@@ -69,7 +69,7 @@ Cliente *busca(FILE*clientes, int chave){
 void inserir(FILE *meta, FILE *clientes, Cliente *info){
     int posicao, contador, valor, i, pxchave, proxchave, proxposi;
     int validade = 0;
-    int volta = 0
+    int volta = 0;
     Cliente *checagem = (Cliente *)malloc(sizeof(Cliente));
     
     posicao = info->chave % TAMANHO_HASH;
@@ -86,7 +86,6 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
     fread(&contador, sizeof(int), 1, meta);
     
     i = posicao;
-    Iinicial = posicao;
     rewind(clientes);
     fseek(clientes, sizeof(Cliente) * (posicao), SEEK_SET);
     fread(&checagem->chave, sizeof(int), 1, clientes);
