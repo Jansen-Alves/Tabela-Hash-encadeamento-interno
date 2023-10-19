@@ -69,7 +69,9 @@ Cliente *busca(FILE*clientes, int chave){
 void inserir(FILE *meta, FILE *clientes, Cliente *info){
     int posicao, contador, valor, i, pxchave, proxchave, proxposi;
     int validade = 0;
+    int volta = 0
     Cliente *checagem = (Cliente *)malloc(sizeof(Cliente));
+    
     posicao = info->chave % TAMANHO_HASH;
     //printf("Posicao na hash eh %d", posicao);
 
@@ -84,7 +86,7 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
     fread(&contador, sizeof(int), 1, meta);
     
     i = posicao;
-
+    Iinicial = posicao;
     rewind(clientes);
     fseek(clientes, sizeof(Cliente) * (posicao), SEEK_SET);
     fread(&checagem->chave, sizeof(int), 1, clientes);
@@ -116,23 +118,27 @@ void inserir(FILE *meta, FILE *clientes, Cliente *info){
                 validade = 1;
             } else if(checagem->prox == -1){
                 
-                if(pxchave != -1){
+                if(pxchave != -1 || i == 6){
                     //printf("%d", pxchave);
                     proxposi = i; // vai rodar a lista até achar uma posição livre e gravar qual posicao é.
                     proxchave = pxchave;
-                    while(proxchave != -1 && proxposi < contador){
+                    while(proxchave != -1 && proxposi < contador && proxposi + 1 != i){
                         printf("posicao pós fim da fila: %d \n", proxposi);
                         rewind(clientes);
                         fseek(clientes, sizeof(Cliente) * proxposi, SEEK_SET);
                         fread(&proxchave, sizeof(int), 1, clientes);
-                        if(proxchave != -1){
-                        proxposi = proxposi +1;
+
+                        if(proxposi == 6){
+                            proxposi = 0;
+                        }
+                        else if(proxchave != -1){
+                            proxposi = proxposi +1;
                         }
                     }
+                    
                     if(proxchave == -1){
                         posicao = proxposi;
-                    }
-                    else{
+                    }else{
                         validade = 3;
                     }
                 }
