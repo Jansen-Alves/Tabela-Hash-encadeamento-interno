@@ -69,7 +69,6 @@ Cliente *busca(FILE*clientes, int chave){
 void inserir(FILE *meta, FILE *clientes, Cliente *info){
     int posicao, contador, valor, i, pxchave, proxchave, proxposi;
     int validade = 0;
-    int volta = 0;
     Cliente *checagem = (Cliente *)malloc(sizeof(Cliente));
     
     posicao = info->chave % TAMANHO_HASH;
