@@ -214,7 +214,7 @@ void deletar(FILE *meta, FILE *clientes, int chave){
             //printf("\nteste");
             if (atual->chave == chave) {
                 validade = 1;
-                atual->chave = -1;
+                atual->chave = -2;
                 strcpy(atual->nome, "----");
                 atual->estado = 0;
                 proximo = atual->prox;
